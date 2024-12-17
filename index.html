@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Christmas Card</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #003366, #1a1a1a);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #ffffff;
+            height: 100%;
+        }
+
+        .card h1 {
+            font-size: 3em;
+            text-shadow: 2px 2px 4px #000000;
+            margin: 0.5em 0;
+        }
+
+        .card p {
+            font-size: 1.5em;
+            margin: 0.5em 0;
+        }
+
+        .tree-container {
+            position: absolute;
+            bottom: 10%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .tree {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tree .layer {
+            background: #2E8B57;
+            width: 160px;
+            height: 60px;
+            margin-bottom: -30px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .tree .layer:nth-child(1) {
+            width: 220px;
+            height: 70px;
+        }
+
+        .tree .layer:nth-child(2) {
+            width: 180px;
+            height: 60px;
+        }
+
+        .tree .layer:nth-child(3) {
+            width: 140px;
+            height: 50px;
+        }
+
+        .tree .layer:nth-child(4) {
+            width: 100px;
+            height: 40px;
+        }
+
+        .tree .star {
+            position: absolute;
+            top: -36px;
+            font-size: 40px;
+            color: gold;
+            animation: twinkle 2s infinite alternate;
+            z-index: 1;
+        }
+
+        .tree .trunk {
+            width: 40px;
+            height: 60px;
+            background: #8B4513;
+            margin-top: -25px;
+        }
+
+        .tree .ornament {
+            position: absolute;
+            background: red;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Ornament Placement */
+        .tree .ornament:nth-child(5) {
+            top: -90px;
+            left: -50px;
+            background: red;
+        }
+
+        .tree .ornament:nth-child(6) {
+            top: -60px;
+            left: 50px;
+            background: gold;
+        }
+
+        .tree .ornament:nth-child(7) {
+            top: -120px;
+            left: 0px;
+            background: blue;
+        }
+
+        .tree .ornament:nth-child(8) {
+            top: -30px;
+            left: -20px;
+            background: purple;
+        }
+
+        .tree .ornament:nth-child(9) {
+            top: -150px;
+            left: 30px;
+            background: pink;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.8;
+                transform: rotate(-10deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: rotate(10deg);
+            }
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="snowCanvas"></canvas>
+
+    <div class="card">
+        <h1>Merry Christmas!</h1>
+        <p>Wishing you joy and peace this holiday season.</p>
+    </div>
+
+    <!-- Christmas Tree -->
+    <div class="tree-container">
+        <div class="tree">
+            <div class="star">★</div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="trunk"></div>
+        </div>
+    </div>
+
+    <script>
+        // Snowfall effect using JavaScript
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Array to hold snowflakes
+        const snowflakes = [];
+
+        // Snowflake class
+        class Snowflake {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 4 + 1;
+                this.speed = Math.random() * 2 + 1;
+                this.wind = Math.random() * 1 - 0.5;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x += this.wind;
+
+                // Reset snowflake to top when it falls off the bottom
+                if (this.y > canvas.height) {
+                    this.y = -this.radius;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        // Create snowflakes
+        function createSnowflakes(count) {
+            for (let i = 0; i < count; i++) {
+                snowflakes.push(new Snowflake());
+            }
+        }
+
+        // Animate snowflakes
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            snowflakes.forEach((snowflake) => {
+                snowflake.update();
+                snowflake.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize
+        createSnowflakes(150); // Number of snowflakes
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+
+</html>
